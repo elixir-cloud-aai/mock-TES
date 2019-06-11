@@ -99,6 +99,21 @@ paths:
             $ref: '#/definitions/tesServiceInfo'
       tags:
         - TaskService
+  /tasks/service-info/task-info:
+    get:
+      summary: |-
+        GetServiceInfoTaskInfo provides information about the 
+        specific tasks Running Time and Queuing Time.
+      operationId: GetServiceInfoTaskInfo
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/tesTasksInfo'
+      tags:
+        - TaskService
   '/tasks/{id}':
     get:
       summary: |-
@@ -583,3 +598,15 @@ definitions:
     - logs
     - outputs
     readOnly: true
+  tesTasksInfo:
+    properties:
+      id:
+        type: string
+        description: ''
+      execution_time:
+        type: string
+        description: ''
+      queuing_time:
+        type: string
+        description: ''
+    description: 'Returns parameters required for the calculation of task execution logic namely the queuing time and running time of tasks'
