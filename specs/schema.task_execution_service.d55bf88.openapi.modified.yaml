@@ -89,7 +89,7 @@ paths:
     get:
       summary: |-
         GetServiceInfo provides information about the service,
-        such as storage details, resource availability, and
+        such as storage details, resource availability, and 
         other documentation.
       operationId: GetServiceInfo
       responses:
@@ -102,7 +102,7 @@ paths:
   /tasks/service-info/task-info:
     get:
       summary: |-
-        GetServiceInfoTaskInfo provides information about the
+        GetServiceInfoTaskInfo provides information about the 
         specific tasks Running Time and Queuing Time.
       operationId: GetServiceInfoTaskInfo
       responses:
@@ -183,7 +183,7 @@ definitions:
         description: Task identifier assigned by the server.
     description: CreateTaskResponse describes a response from the CreateTask endpoint.
     readOnly: true
-    required:
+    required: 
     - id
   tesExecutor:
     type: object
@@ -270,7 +270,7 @@ definitions:
         format: int32
         description: Exit code.
     description: ExecutorLog describes logging information related to an Executor.
-    required:
+    required: 
     - exit_code
     readOnly: true
   tesFileType:
@@ -308,13 +308,13 @@ definitions:
       content:
         type: string
         description: |-
-          File content literal.
+          File content literal. 
           Implementations should support a minimum of 128 KiB in this field and may define its own maximum.
           UTF-8 encoded
 
           If content is not empty, "url" must be ignored.
     description: Input describes Task input files.
-    required:
+    required: 
     - type
     - path
   tesListTasksResponse:
@@ -331,7 +331,7 @@ definitions:
           Token used to return the next page of results.
           See TaskListRequest.next_page_token
     description: ListTasksResponse describes a response from the ListTasks endpoint.
-    required:
+    required: 
     - tasks
     readOnly: true
   tesOutput:
@@ -427,7 +427,7 @@ definitions:
           Lists some, but not necessarily all, storage locations supported by the service.
 
           Must be in a valid URL format.
-          e.g.
+          e.g. 
           file:///path/to/local/funnel-storage
           s3://ohsu-compbio-funnel/storage
           etc.
@@ -600,15 +600,16 @@ definitions:
     readOnly: true
   tesTasksInfo:
     properties:
-      id:
-        type: string
-        description: ''
-      execution_time:
-        type: string
-        description: ''
+      costs:
+        type: number
+        format: int64
+        description: 'Approximate time required for the runing of the task'
       queuing_time:
-        type: string
-        description: ''
+        type: number
+        format: double
+        description: 'Time required for the running of the '
       resources:
         $ref: '#/definitions/tesResources'
     description: 'Returns parameters required for the calculation of task execution logic namely the queuing time and running time of tasks'
+    required:
+    - executors
