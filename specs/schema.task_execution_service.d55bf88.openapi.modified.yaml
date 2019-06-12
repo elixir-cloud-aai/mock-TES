@@ -102,8 +102,9 @@ paths:
   /tasks/service-info/task-info:
     get:
       summary: |-
-        GetServiceInfoTaskInfo provides information about the 
-        specific tasks Running Time and Queuing Time.
+        GetServiceInfoTaskInfo provides estimates for the 
+        queuing time and incurred costs for a task with the
+        given resource requirements.
       operationId: GetServiceInfoTaskInfo
       responses:
         '200':
@@ -112,6 +113,12 @@ paths:
             type: array
             items:
               $ref: '#/definitions/tesTasksInfo'
+       parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/tesResources'
       tags:
         - TaskService
   '/tasks/{id}':
@@ -621,15 +628,21 @@ definitions:
       queuing_time:
         type: number
         format: int64
-        description: 'Time required for the running of the'
+        description: |-
+          Estimated time that a task with the given resource requirements
+          will spend in the task queue.
       queuing_time_unit:
         type: string
         enum:
           - SECONDS 
           - MINUTES
           - HOURS
+        description: Unit of the queuing time estimate.
       resources:
         $ref: '#/definitions/tesResources'
-    description: 'Returns parameters required for the calculation of task execution logic namely the queuing time and running time of tasks'
+    description: |-
+      Given a set of resource requirements, returns the estimated queuing
+      time and costs. Useful to decide to which execution endpoint a
+      given task should be sent to.
     required:
     - executors
