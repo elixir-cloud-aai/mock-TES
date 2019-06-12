@@ -102,8 +102,9 @@ paths:
   /tasks/service-info/task-info:
     get:
       summary: |-
-        GetServiceInfoTaskInfo provides information about the 
-        specific tasks Running Time and Queuing Time.
+        GetServiceInfoTaskInfo provides estimates for the 
+        queuing time and incurred costs for a task with the
+        given resource requirements.
       operationId: GetServiceInfoTaskInfo
       responses:
         '200':
@@ -112,6 +113,12 @@ paths:
             type: array
             items:
               $ref: '#/definitions/tesTasksInfo'
+       parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/tesResources'
       tags:
         - TaskService
   '/tasks/{id}':
@@ -175,6 +182,22 @@ definitions:
     type: object
     description: CancelTaskResponse describes a response from the CancelTask endpoint.
     readOnly: true
+  tesCost:
+    type: object
+    description: Descibe the cost for the unit of the cost of resources to allow computation of task execution order
+    properties:
+      currency:
+        type: string
+        enum: 
+          - US DOLLAR
+          - EUROS
+      units:
+        description: How many units of resources does the amount account for 
+        type: integer
+      amout:
+        description: The cost of the resouce unit(s)
+        type: number
+        format: int64
   tesCreateTaskResponse:
     type: object
     properties:
@@ -600,13 +623,26 @@ definitions:
     readOnly: true
   tesTasksInfo:
     properties:
-      id:
-        type: string
-        description: ''
-      execution_time:
-        type: string
-        description: ''
+      cost:
+        $ref: '#/definitions/tesCost'
       queuing_time:
+        type: number
+        format: int64
+        description: |-
+          Estimated time that a task with the given resource requirements
+          will spend in the task queue.
+      queuing_time_unit:
         type: string
-        description: ''
-    description: 'Returns parameters required for the calculation of task execution logic namely the queuing time and running time of tasks'
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
+        description: Unit of the queuing time estimate.
+      resources:
+        $ref: '#/definitions/tesResources'
+    description: |-
+      Given a set of resource requirements, returns the estimated queuing
+      time and costs. Useful to decide to which execution endpoint a
+      given task should be sent to.
+    required:
+    - executors
