@@ -175,6 +175,22 @@ definitions:
     type: object
     description: CancelTaskResponse describes a response from the CancelTask endpoint.
     readOnly: true
+  tesCost:
+    type: object
+    description: Descibe the cost for the unit of the cost of resources to allow computation of task execution order
+    properties:
+      currency:
+        type: string
+        enum: 
+          - US DOLLAR
+          - EUROS
+      units:
+        description: How many units of resources does the amount account for 
+        type: integer
+      amout:
+        description: The cost of the resouce unit(s)
+        type: number
+        format: int64
   tesCreateTaskResponse:
     type: object
     properties:
@@ -600,14 +616,18 @@ definitions:
     readOnly: true
   tesTasksInfo:
     properties:
-      costs:
-        type: number
-        format: int64
-        description: 'Approximate time required for the runing of the task'
+      cost:
+        $ref: '#/definitions/tesCost'
       queuing_time:
         type: number
-        format: double
-        description: 'Time required for the running of the '
+        format: int64
+        description: 'Time required for the running of the'
+      queuing_time_unit:
+        type: string
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
       resources:
         $ref: '#/definitions/tesResources'
     description: 'Returns parameters required for the calculation of task execution logic namely the queuing time and running time of tasks'
