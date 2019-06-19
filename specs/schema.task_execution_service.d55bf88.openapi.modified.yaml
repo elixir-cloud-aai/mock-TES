@@ -113,12 +113,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/tesTasksInfo'
-       parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/tesResources'
       tags:
         - TaskService
   '/tasks/{id}':
@@ -644,5 +638,3 @@ definitions:
       Given a set of resource requirements, returns the estimated queuing
       time and costs. Useful to decide to which execution endpoint a
       given task should be sent to.
-    required:
-    - executors
