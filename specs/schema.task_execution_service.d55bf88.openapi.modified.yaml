@@ -69,6 +69,7 @@ paths:
           default: MINIMAL
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
     post:
       summary: Create a new task.
       operationId: CreateTask
@@ -85,6 +86,7 @@ paths:
             $ref: '#/definitions/tesTask'
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
   /tasks/service-info:
     get:
       summary: |-
@@ -99,6 +101,7 @@ paths:
             $ref: '#/definitions/tesServiceInfo'
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
   /tasks/service-info/task-info:
     get:
       summary: |-
@@ -115,6 +118,7 @@ paths:
               $ref: '#/definitions/tesTasksInfo'
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
   '/tasks/{id}':
     get:
       summary: |-
@@ -155,6 +159,7 @@ paths:
           default: MINIMAL
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
   '/tasks/{id}:cancel':
     post:
       summary: Cancel a task.
@@ -171,6 +176,7 @@ paths:
           type: string
       tags:
         - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
 definitions:
   tesCancelTaskResponse:
     type: object
