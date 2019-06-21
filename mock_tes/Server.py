@@ -1,5 +1,5 @@
 """
-Mock Service for the GA4GH Data Repository Schema 
+Mock Service for the GA4GH Task Execution Schema
 """
 import logging 
 
