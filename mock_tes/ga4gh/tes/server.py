@@ -3,7 +3,7 @@ Controler for the GA4GH Task Execution Schema Server
 """
 from flask import current_app
 from pymongo import MongoClient
-
+from copy import deepcopy
 
 def CancelTask(id):  # noqa: E501
     # to-do handle errors
@@ -12,7 +12,7 @@ def CancelTask(id):  # noqa: E501
 
 def CreateTask(body):  # noqa: E501
     # to-do handle errors
-    return {200: "a test"}, 200
+    return {200: "a test"}
 
 
 def GetServiceInfo():  # noqa: E501
@@ -21,8 +21,8 @@ def GetServiceInfo():  # noqa: E501
 
 
 def GetServiceInfoTaskInfo():  # noqa: E501
-    # to-do handle errors
-    return None
+    tasks_info = deepcopy(current_app.config['service_info']['tasks_info'])
+    return {200: [tasks_info]}
 
 
 def GetTask(id, view=None):  # noqa: E501

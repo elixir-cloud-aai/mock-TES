@@ -10,6 +10,16 @@ class Tasks:
 
         self.debug = debug
 
+        self.collection = collection
+        self.index = index
+
+        self.task_id_length = task_id_length
+        self.task_id_charset = task_id_charset
+
+        self.default_page_size = default_page_size
+
+        self.latest_object_id = PyMongoUtils.find_id_latest(self.collection)
+
     def __create_task_id(self):
         '''
         create a random task id
@@ -17,14 +27,18 @@ class Tasks:
         '''
         return None
 
-    def __init_create_document(self):
+    def __init_create_document(self, task_id, state, name, description, inputes, resources, executors, volumes, tags, logs):
         """
         initialise a new task
         :return: dict of params defined
         """
+        document = Dict()
+
+        # add as keys
+
         return None
 
-    def __manage_drs_attachments(self):
+    def __manage_tes_inputs(self):
         """
         should manage the attached drs id's
         :return:
@@ -36,7 +50,7 @@ class Tasks:
         :return:
         """
 
-    def list_tasks(self):
+    def __manage_tes_resources(self):
         """
 
         :return:
@@ -47,4 +61,3 @@ class Tasks:
 
         :return:
         """
-

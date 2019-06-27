@@ -47,7 +47,7 @@ db_tasks = mongo.db["tasks"]
 db_tasks.create_index([("task_id", ASCENDING)], unique=True)
 
 # to-do add a debug option
-runs = Tasks(
+tasks = Tasks(
     collection="tes_db",
     index="task_id",
     task_id_length=config["database"]["task_id"]["length"],
@@ -65,6 +65,9 @@ def configure_app(app):
 
     # Add OpenAPIs
     app = add_openapi(app)
+
+    # Add user configuration to Flask app config
+    app.app.config.update(config)
 
     return app
 
