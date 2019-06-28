@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.idea/misc.xml
+.idea/mock-TES.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml

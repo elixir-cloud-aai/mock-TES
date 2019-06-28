@@ -8,10 +8,8 @@ from flask_pymongo import ASCENDING, PyMongo
 
 from ga4gh.tes.endpoints.tasks import Tasks
 
-# from ga4gh.utils.service_info import ServiceInfo
-from pathlib import Path
-import os, sys
 import string
+import sys
 
 app = App(__name__)
 config = parse_app_config("config.yaml", config_var="TES_CONFIG")
@@ -53,7 +51,7 @@ tasks = Tasks(
     task_id_length=config["database"]["task_id"]["length"],
     task_id_charset=eval(config["database"]["task_id"]["charset"]),
     default_page_size=config["api_endpoints"]["default_page_size"],
-    debug=config["server"]["debug"],
+    debug=config["server"]["debug"]
 )
 
 

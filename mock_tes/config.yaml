@@ -10,18 +10,13 @@ service_info:
     supported_file_system_protocols:
         - http
     tasks_info:
-        queuing_time: 10
-        queuing_time_unit: 'SECONDS'
         costs:
             currency: 'DOLLARS'
             unit: 1
-            amout: 2
         resources:
             cpu_cores: 4
             ram_gb: 8
             disk_gb: 10
-            zones: ['1','3','4']
-            preemptible: true
     tags:
         some_param_1: something
         some_param_2: something_else

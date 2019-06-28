@@ -113,9 +113,13 @@ paths:
         '200':
           description: ''
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/tesTasksInfo'
+            $ref: '#/definitions/tesTasksInfo'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/tesResources'
       tags:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
@@ -622,6 +626,7 @@ definitions:
     - outputs
     readOnly: true
   tesTasksInfo:
+    #to-do modify this model to deal with returning the time post DRS cost calculation
     properties:
       cost:
         $ref: '#/definitions/tesCost'
@@ -638,8 +643,6 @@ definitions:
           - MINUTES
           - HOURS
         description: Unit of the queuing time estimate.
-      resources:
-        $ref: '#/definitions/tesResources'
     description: |-
       Given a set of resource requirements, returns the estimated queuing
       time and costs. Useful to decide to which execution endpoint a
