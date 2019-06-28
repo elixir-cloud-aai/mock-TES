@@ -31,9 +31,9 @@ def GetServiceInfoTaskInfo(body):  # noqa: E501
     #       2. calculation of t exec
     #       3. calculation of DRS instance's t data transfer
     # copy the service-info/task-info parameters
-    tasks_info = deepcopy(current_app.config["service_info"]["tasks_info"])
+    costs = deepcopy(current_app.config["service_info"]["tasks_info"]['costs'])
 
-    print(tasks_info)
+    print(costs)
     # to-do :
     #       add formula to approximate the cost
 

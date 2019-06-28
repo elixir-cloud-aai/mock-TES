@@ -10,13 +10,22 @@ service_info:
     supported_file_system_protocols:
         - http
     tasks_info:
-        costs:
-            currency: 'DOLLARS'
-            unit: 1
-        resources:
-            cpu_cores: 4
+        costs_computation:
+            amount: 0.04
+            currency: 'DOLLAR'
             ram_gb: 8
-            disk_gb: 10
+            time: 1
+            time_unit: 'HOUR'
+            minimum_time: 1
+            minimum_time_unit: 'MINUTE'
+        cost_storage:
+            amount: 0.02
+            currency: 'DOLLAR'
+            disk_gb: 4
+        cost_data_transfer:
+            amount: 0.09
+            currency: 'DOLLAR'
+            disk_gb: 1
     tags:
         some_param_1: something
         some_param_2: something_else
