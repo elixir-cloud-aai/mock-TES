@@ -102,20 +102,24 @@ paths:
       tags:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
-  /tasks/service-info/task-info:
+  /tasks/task-info:
     get:
       summary: |-
         GetServiceInfoTaskInfo provides estimates for the 
         queuing time and incurred costs for a task with the
         given resource requirements.
-      operationId: GetServiceInfoTaskInfo
+      operationId: GetTaskInfo
       responses:
         '200':
           description: ''
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/tesTasksInfo'
+            $ref: '#/definitions/tesTaskInfo'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/tesResources'
       tags:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
@@ -182,22 +186,22 @@ definitions:
     type: object
     description: CancelTaskResponse describes a response from the CancelTask endpoint.
     readOnly: true
-  tesCost:
+  tesCosts:
     type: object
-    description: Descibe the cost for the unit of the cost of resources to allow computation of task execution order
     properties:
+      amount:
+        type: number
+        format: double
+        description: Numeric value specifying an amount of money.
       currency:
         type: string
         enum: 
-          - US DOLLAR
-          - EUROS
-      units:
-        description: How many units of resources does the amount account for 
-        type: integer
-      amout:
-        description: The cost of the resouce unit(s)
-        type: number
-        format: int64
+          - ARBITRARY
+          - BTC
+          - EUR
+          - USD
+        description: Currency/unit of the costs.
+    description: Generic object specifying an amount of money.
   tesCreateTaskResponse:
     type: object
     properties:
@@ -208,6 +212,21 @@ definitions:
     readOnly: true
     required: 
     - id
+  tesDuration:
+    type: object
+    properties:
+      duration:
+        type: integer
+        format: int64
+        description: Integer value specifying a length of time.
+      unit:
+        type: string
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
+        description: Unit of the duration.
+    description: Generic object specifying a length of time. 
   tesExecutor:
     type: object
     properties:
@@ -411,6 +430,10 @@ definitions:
   tesResources:
     type: object
     properties:
+      execution_time_min:
+        type: integer
+        format: int64
+        description: Requested execution in minutes (min)
       cpu_cores:
         type: integer
         format: int64
@@ -621,26 +644,21 @@ definitions:
     - logs
     - outputs
     readOnly: true
-  tesTasksInfo:
+  tesTaskInfo:
+    type: object
     properties:
       cost:
-        $ref: '#/definitions/tesCost'
-      queuing_time:
-        type: number
-        format: int64
+        $ref: '#/definitions/tesCosts'
         description: |-
-          Estimated time that a task with the given resource requirements
-          will spend in the task queue.
-      queuing_time_unit:
-        type: string
-        enum:
-          - SECONDS 
-          - MINUTES
-          - HOURS
-        description: Unit of the queuing time estimate.
-      resources:
-        $ref: '#/definitions/tesResources'
+          Estimated total incurred costs for running a task with the given
+          resource requirements on this TES instance.
+      queuing_time:
+        $ref: '#/definitions/tesDuration'
+        description: |-
+          Given the current load on this TES instance, returns an estimate of
+          the time that a task with the given resource requirements will spend
+          in the task queue.
     description: |-
       Given a set of resource requirements, returns the estimated queuing
-      time and costs. Useful to decide to which execution endpoint a
-      given task should be sent to.
+      time and total incurred costs. Allows informed decisions with regard
+      to which TES instance a given task should be sent to.
