@@ -102,18 +102,18 @@ paths:
       tags:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
-  /tasks/service-info/task-info:
+  /tasks/task-info:
     get:
       summary: |-
         GetServiceInfoTaskInfo provides estimates for the 
         queuing time and incurred costs for a task with the
         given resource requirements.
-      operationId: GetServiceInfoTaskInfo
+      operationId: GetTaskInfo
       responses:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/tesTasksInfo'
+            $ref: '#/definitions/tesTaskInfo'
       parameters:
         - name: body
           in: body
@@ -186,39 +186,22 @@ definitions:
     type: object
     description: CancelTaskResponse describes a response from the CancelTask endpoint.
     readOnly: true
-  tesCost:
+  tesCosts:
     type: object
-    description: Descibe the cost for the unit of the cost of resources to allow computation of task execution order
     properties:
-      amout:
-        description: The cost of the resouce unit(s)
+      amount:
         type: number
-        format: int64
+        format: double
+        description: Numeric value specifying an amount of money.
       currency:
         type: string
-        enum:
-          - US DOLLAR
-          - EUROS
-      units:
-        description: How many units of resources does the amount account for
-        type: integer
-      unit_type:
-        description: What are the units used to quantify the resource
-        type: string
-        enum:
-          - GB
-          - TB
-          - MB
-      time:
-        description: For how long will the unit of resouece be available
-        type: integer
-      time_unit:
-        description: Unit of time used for allotting resource
-        type: string
-        enum:
-          - MINUTES
-          - HOURS
-          - NA
+        enum: 
+          - ARBITRARY
+          - BTC
+          - EUR
+          - USD
+        description: Currency/unit of the costs.
+    description: Generic object specifying an amount of money.
   tesCreateTaskResponse:
     type: object
     properties:
@@ -229,6 +212,21 @@ definitions:
     readOnly: true
     required:
     - id
+  tesDuration:
+    type: object
+    properties:
+      duration:
+        type: integer
+        format: int64
+        description: Integer value specifying a length of time.
+      unit:
+        type: string
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
+        description: Unit of the duration.
+    description: Generic object specifying a length of time. 
   tesExecutor:
     type: object
     properties:
@@ -432,6 +430,10 @@ definitions:
   tesResources:
     type: object
     properties:
+      execution_time_min:
+        type: integer
+        format: int64
+        description: Requested execution in minutes (min)
       cpu_cores:
         type: integer
         format: int64
@@ -642,28 +644,33 @@ definitions:
     - logs
     - outputs
     readOnly: true
-  tesTasksInfo:
+  tesTaskInfo:
+    type: object
     properties:
-      cost_computation:
-        $ref: '#/definitions/tesCost'
-      cost_storage:
-        $ref: '#/definitions/tesCost'
-      cost_data_transfer:
-        $ref: '#/definitions/tesCost'
-      queuing_time:
-        type: number
-        format: int64
+      costs_total:
+        $ref: '#/definitions/tesCosts'
         description: |-
-          Estimated time that a task with the given resource requirements
-          will spend in the task queue.
-      queuing_time_unit:
-        type: string
-        enum:
-          - HOURS
-          - MINUTES
-          - SECONDS
-        description: Unit of the queuing time estimate.
+          Estimated total incurred costs for running a task with the given
+          resource requirements on this TES instance.
+      costs_computation:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for CPU use and memory consumption.
+      costs_storage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for storage use.
+      costs_data_transfer:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for data transfer.
+      queuing_time:
+        $ref: '#/definitions/tesDuration'
+        description: |-
+          Given the current load on this TES instance, returns an estimate of
+          the time that a task with the given resource requirements will spend
+          in the task queue.
     description: |-
       Given a set of resource requirements, returns the estimated queuing
-      time and costs. Useful to decide to which execution endpoint a
-      given task should be sent to.
+      time and total incurred costs. Allows informed decisions with regard
+      to which TES instance a given task should be sent to.
