@@ -210,7 +210,7 @@ definitions:
         description: Task identifier assigned by the server.
     description: CreateTaskResponse describes a response from the CreateTask endpoint.
     readOnly: true
-    required: 
+    required:
     - id
   tesDuration:
     type: object
@@ -312,7 +312,7 @@ definitions:
         format: int32
         description: Exit code.
     description: ExecutorLog describes logging information related to an Executor.
-    required: 
+    required:
     - exit_code
     readOnly: true
   tesFileType:
@@ -350,13 +350,13 @@ definitions:
       content:
         type: string
         description: |-
-          File content literal. 
+          File content literal.
           Implementations should support a minimum of 128 KiB in this field and may define its own maximum.
           UTF-8 encoded
 
           If content is not empty, "url" must be ignored.
     description: Input describes Task input files.
-    required: 
+    required:
     - type
     - path
   tesListTasksResponse:
@@ -373,7 +373,7 @@ definitions:
           Token used to return the next page of results.
           See TaskListRequest.next_page_token
     description: ListTasksResponse describes a response from the ListTasks endpoint.
-    required: 
+    required:
     - tasks
     readOnly: true
   tesOutput:
@@ -473,7 +473,7 @@ definitions:
           Lists some, but not necessarily all, storage locations supported by the service.
 
           Must be in a valid URL format.
-          e.g. 
+          e.g.
           file:///path/to/local/funnel-storage
           s3://ohsu-compbio-funnel/storage
           etc.
@@ -647,11 +647,23 @@ definitions:
   tesTaskInfo:
     type: object
     properties:
-      cost:
+      costs_total:
         $ref: '#/definitions/tesCosts'
         description: |-
           Estimated total incurred costs for running a task with the given
           resource requirements on this TES instance.
+      costs_computation:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for CPU use and memory consumption.
+      costs_storage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for storage use.
+      costs_data_transfer:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for data transfer.
       queuing_time:
         $ref: '#/definitions/tesDuration'
         description: |-
