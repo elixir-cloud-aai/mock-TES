@@ -1,13 +1,102 @@
 """
 Mock Service for the GA4GH Task Execution Schema
 """
-import logging 
-
-from connexion.resolver import RestyResolver
+from config.app_config import parse_app_config
 from connexion import App
 
-app = App(__name__)
-app.add_api('specs/schema.task_execution_service.d55bf88.openapi.modified.yaml')
+from flask_pymongo import ASCENDING, PyMongo
 
-if __name__ ==  '__main__' :
-    app.run(host='0.0.0.0', port=5000, debug=True)
+from ga4gh.tes.endpoints.tasks import Tasks
+
+import string
+import sys
+
+app = App(__name__)
+config = parse_app_config("config.yaml", config_var="TES_CONFIG")
+
+try:
+    app = App(
+        __name__,
+        specification_dir=config["openapi"]["path"],
+        swagger_ui=True,
+        swagger_json=True,
+    )
+except KeyError:
+    sys.exit("Config file corrupt. Execution aborted.")
+
+
+# Initialize database
+try:
+    mongo = PyMongo(
+        app.app,
+        uri="mongodb://{host}:{port}/{name}".format(
+            host=config["database"]["host"],
+            port=config["database"]["port"],
+            name=config["database"]["name"],
+        ),
+    )
+    db = mongo.db[config["database"]["name"]]
+except KeyError:
+    sys.exit("Config file corrupt. Execution aborted.")
+
+# Add database collections
+db_service_info = mongo.db["service-info"]
+db_tasks = mongo.db["tasks"]
+db_tasks.create_index([("task_id", ASCENDING)], unique=True)
+
+# to-do add a debug option
+tasks = Tasks(
+    collection="tes_db",
+    index="task_id",
+    task_id_length=config["database"]["task_id"]["length"],
+    task_id_charset=eval(config["database"]["task_id"]["charset"]),
+    default_page_size=config["api_endpoints"]["default_page_size"],
+    debug=config["server"]["debug"]
+)
+
+
+def configure_app(app):
+    """Configure app"""
+
+    # Add settings
+    app = add_settings(app)
+
+    # Add OpenAPIs
+    app = add_openapi(app)
+
+    # Add user configuration to Flask app config
+    app.app.config.update(config)
+
+    return app
+
+
+def add_settings(app):
+    """Add settings to Flask app instance"""
+    try:
+        app.host = config["server"]["host"]
+        app.port = config["server"]["port"]
+        app.debug = config["server"]["debug"]
+    except KeyError:
+        sys.exit("Config file corrupt. Execution aborted.")
+
+    return app
+
+
+def add_openapi(app):
+    """Add OpenAPI specification to connexion app instance"""
+    try:
+        app.add_api(config["openapi"]["yaml_specs"], validate_responses=True)
+    except KeyError:
+        sys.exit("Config file corrupt. Execution aborted.")
+
+    return app
+
+
+def main(app):
+    """Initialize, configure and run server"""
+    app = configure_app(app)
+    app.run()
+
+
+if __name__ == "__main__":
+    main(app)
