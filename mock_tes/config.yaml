@@ -9,11 +9,6 @@ openapi:
     path: specs/schema.task_execution_service.d55bf88.openapi.modified.yaml'
 
 # TES service info settings
-service_info:
-    name: mock-TES
-    doc: TES instance for implementing and testing task distribution logic
-    storage:
-        - http://some.storage.location
 task_info:
     currency: ARBITRARY
     time_unit: HOURS
