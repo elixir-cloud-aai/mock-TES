@@ -655,7 +655,11 @@ definitions:
       costs_computation:
         $ref: '#/definitions/tesCosts'
         description: |-
-          Estimated incurred costs for CPU use and memory consumption.
+          Estimated incurred costs for CPU use.
+      costs_memory:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for memory consumption.
       costs_storage:
         $ref: '#/definitions/tesCosts'
         description: |-
