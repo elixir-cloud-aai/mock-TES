@@ -1,54 +1,25 @@
 # General server settings
 server:
     host: localhost
-    port: 8888
+    port: 9001
     debug: True
+
+# OpenAPI specs
+openapi:
+    path: specs/schema.task_execution_service.d55bf88.openapi.modified.yaml'
 
 # TES service info settings
 service_info:
-    contact_info: https://github.com/elixir-europe/mock-TES
-    supported_file_system_protocols:
-        - http
-    tasks_info:
-        costs_computation:
-            amount: 0.04
-            currency: 'DOLLAR'
-            ram_gb: 8
-            time: 1
-            time_unit: 'HOUR'
-            minimum_time: 1
-            minimum_time_unit: 'MINUTE'
-        cost_storage:
-            amount: 0.02
-            currency: 'DOLLAR'
-            disk_gb: 4
-        cost_data_transfer:
-            amount: 0.09
-            currency: 'DOLLAR'
-            disk_gb: 1
-    tags:
-        some_param_1: something
-        some_param_2: something_else
-        some_param_3: another_thing
-        some_param_4: yet_another_thing
-        some_param_5: and_yet_another_thing
-
-
-# Location of OpenAPI specs
-openapi:
-    path: ''
-    yaml_specs: 'specs/schema.task_execution_service.d55bf88.openapi.modified.yaml'
-
-# Database settings
-#to-do add current id constraints
-database:
-    host: 'localhost'
-    port: 27017
-    name: tes-db
-    task_id:
-        length: 6
-        charset: string.ascii_uppercase + string.digits
-
-# Endpoint parameters
-api_endpoints:
-    default_page_size: 10
+    name: mock-TES
+    doc: TES instance for implementing and testing task distribution logic
+    storage:
+        - http://some.storage.location
+task_info:
+    currency: ARBITRARY
+    time_unit: HOURS
+    size_unit: GB
+    unit_costs_per_time_unit:
+        computation_costs_per_unit: 1
+        memory_costs_per_size_unit: 1
+        storage_per_size_unit: 1
+        transfer_per_size_unit: 1
