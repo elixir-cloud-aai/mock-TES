@@ -16,5 +16,5 @@ task_info:
     unit_costs_per_time_unit:
         computation_costs_per_unit: 1
         memory_costs_per_size_unit: 1
-        storage_per_size_unit: 1
-        transfer_per_size_unit: 1
+        data_storage_per_size_unit: 1
+        data_transfer_per_size_unit: 1
