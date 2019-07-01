@@ -1,58 +1,22 @@
 """
-Mock Service for the GA4GH Task Execution Schema
+Mock service for the GA4GH Task Execution Schema.
 """
-from config.app_config import parse_app_config
-from connexion import App
-
-from flask_pymongo import ASCENDING, PyMongo
-
-from ga4gh.tes.endpoints.tasks import Tasks
-
-import string
 import sys
 
-app = App(__name__)
-config = parse_app_config("config.yaml", config_var="TES_CONFIG")
+from connexion import App
 
-try:
-    app = App(
-        __name__,
-        specification_dir=config["openapi"]["path"],
-        swagger_ui=True,
-        swagger_json=True,
-    )
-except KeyError:
-    sys.exit("Config file corrupt. Execution aborted.")
+from config.app_config import parse_app_config
 
 
-# Initialize database
-try:
-    mongo = PyMongo(
-        app.app,
-        uri="mongodb://{host}:{port}/{name}".format(
-            host=config["database"]["host"],
-            port=config["database"]["port"],
-            name=config["database"]["name"],
-        ),
-    )
-    db = mongo.db[config["database"]["name"]]
-except KeyError:
-    sys.exit("Config file corrupt. Execution aborted.")
-
-# Add database collections
-db_service_info = mongo.db["service-info"]
-db_tasks = mongo.db["tasks"]
-db_tasks.create_index([("task_id", ASCENDING)], unique=True)
-
-# to-do add a debug option
-tasks = Tasks(
-    collection="tes_db",
-    index="task_id",
-    task_id_length=config["database"]["task_id"]["length"],
-    task_id_charset=eval(config["database"]["task_id"]["charset"]),
-    default_page_size=config["api_endpoints"]["default_page_size"],
-    debug=config["server"]["debug"]
+# Instantiate app object
+app = App(
+    __name__,
+    swagger_ui=True,
+    swagger_json=True,
 )
+
+# Parse config
+config = parse_app_config(config_var="TES_CONFIG")
 
 
 def configure_app(app):
@@ -85,7 +49,7 @@ def add_settings(app):
 def add_openapi(app):
     """Add OpenAPI specification to connexion app instance"""
     try:
-        app.add_api(config["openapi"]["yaml_specs"], validate_responses=True)
+        app.add_api(config["openapi"]["path"], validate_responses=True)
     except KeyError:
         sys.exit("Config file corrupt. Execution aborted.")
 

@@ -1,62 +1,134 @@
 """
 Controler for the GA4GH Task Execution Schema Server
 """
+import json
+import logging
+from random import randint
+
+from connexion import request
 from flask import current_app
-from copy import deepcopy
+
+
+def GetTaskInfo(body):  # noqa: E501
+    response = __get_task_info(
+        resources=request.json,
+        params=current_app.config["task_info"]
+    )
+    return response
 
 
 def CancelTask(id):  # noqa: E501
-    # to-do return some value
-    return None
+    # Not implemented
+    return {}
 
 
 def CreateTask(body):  # noqa: E501
-    # to-do return some value
-    return {200: "a test"}
+    # Not implemented
+    return {'id': 'task_id'}
 
 
 def GetServiceInfo():  # noqa: E501
-    # to-do return some value
-    return None
-
-
-def GetServiceInfoTaskInfo(body):  # noqa: E501
-    # to-do :
-    #       add a function to update the config file for mean rate of task arrival &
-    #       mean rate of requests arrival per system
-    #       use updated mean rate of task arrival for generation of random server load
-
-    # to-do: add function :
-    #       1. calculation of t queue
-    #       2. calculation of t exec
-    #       3. calculation of DRS instance's t data transfer
-    # copy the service-info/task-info parameters
-    costs = deepcopy(current_app.config["service_info"]["tasks_info"]['costs'])
-
-    print(costs)
-    # to-do :
-    #       add formula to approximate the cost
-
-    # to-do :
-    #       return approximate cost
-
-    # returns config values
-    return {200: [tasks_info]}
+    # Not implemented
+    return {}
 
 
 def GetTask(id, view=None):  # noqa: E501
-    # to-do return some value
-    return None
+    # Not implemented
+    return {'executors': []}
 
 
-def ListTasks(
-    name_prefix=None, page_size=None, page_token=None, view=None
-):  # noqa: E501
-    # to-do return some value
-    return None
+def ListTasks(name_prefix=None, page_size=None, page_token=None, view=None):  # noqa: E501
+    # Not implemented
+    return {'tasks': []}
 
 
-# to-do add logger
-def log_request(request, response):
-    """Writes request and response to log."""
-    # to-do: write decorator for request logging
+def __get_task_info(resources, params):
+    '''
+    Helper function to estimate task queueing time and costs and build the
+    response object (tesTaskInfo object).
+    '''
+    costs = __get_costs(
+        resources=resources,
+        currency=params['currency'],
+        unit_costs_cores=params['unit_costs']['cpu_usage'],
+        unit_costs_memory=params['unit_costs']['memory_consumption'],
+        unit_costs_storage=params['unit_costs']['data_storage'],
+        unit_costs_transfer=params['unit_costs']['data_transfer']
+    )
+    queue_time = __get_queue_time(
+        resources=resources,
+        time_unit=params['time_unit']
+    )
+    return {
+        'costs_total': costs['total'],
+        'costs_cpu_usage': costs['cpu_usage'],
+        'costs_memory_consumption': costs['memory_consumption'],
+        'costs_data_storage': costs['data_storage'],
+        'costs_data_transfer': costs['data_transfer'],
+        'queue_time': queue_time
+    }
+
+
+def __get_costs(
+    resources,
+    currency='ARBITRARY',
+    unit_costs_cores=0,
+    unit_costs_memory=0,
+    unit_costs_storage=0,
+    unit_costs_transfer=0
+):
+    '''
+    Helper function to estimate task costs from tesResources object. Returns a
+    dictionary of tesCosts objects.
+    '''
+    # Parse resources
+    t = resources['execution_time_min']
+    cores = resources['cpu_cores']
+    mem = resources['ram_gb']
+    size = resources['disk_gb']
+
+    # Calculate partial costs
+    c_cores = t * cores * unit_costs_cores
+    c_mem = t * mem * unit_costs_memory
+    c_storage = t * size * unit_costs_storage
+    c_transfer = 0  # TODO: Implement later; file sizes required
+
+    # Calculate total costs
+    c_total = c_cores + c_mem + c_storage + c_transfer
+
+    # Return dictionary of tesCosts objects
+    return {
+        'total': {
+            'amount': c_total,
+            'currency': currency
+        },
+        'cpu_usage': {
+            'amount': c_cores,
+            'currency': currency
+        },
+        'memory_consumption': {
+            'amount': c_mem,
+            'currency': currency
+        },
+        'data_storage': {
+            'amount': c_storage,
+            'currency': currency
+        },
+        'data_transfer': {
+            'amount': c_transfer,
+            'currency': currency
+        },
+    }
+
+
+def __get_queue_time(resources, time_unit):
+    '''
+    Helper function to estimate task queue time from tesResources object.
+    Returns a tesDuration object.
+    '''
+    duration = randint(0, 3600)
+    unit = time_unit
+    return {
+        'duration': duration,
+        'unit': unit
+    }
