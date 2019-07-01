@@ -103,11 +103,10 @@ paths:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
   /tasks/task-info:
-    get:
+    post:
       summary: |-
-        GetServiceInfoTaskInfo provides estimates for the 
-        queuing time and incurred costs for a task with the
-        given resource requirements.
+        Provides estimates for the queue time and incurred costs for a task
+        with the given resource requirements.
       operationId: GetTaskInfo
       responses:
         '200':
@@ -529,7 +528,12 @@ definitions:
         readOnly: true
       state:
         $ref: '#/definitions/tesState'
-        readOnly: true
+        # AK 01-JUL-2019: `swagger_spec_validator` gave a validation error:
+        # SwaggerValidationWarning: Found "$ref: #/definitions/tesState" with
+        # siblings that will be overwritten.
+        # See https://stackoverflow.com/a/48114924 for more information.
+        # Sibling of $ref was commented out.
+        #readOnly: true
       name:
         type: string
       description:
@@ -597,6 +601,40 @@ definitions:
     description: Task describes an instance of a task.
     required:
     - executors
+  tesTaskInfo:
+    type: object
+    properties:
+      costs_total:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated total incurred costs for running a task with the given
+          resource requirements on this TES instance.
+      costs_cpu_usage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for CPU use.
+      costs_memory_consumption:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for memory consumption.
+      costs_data_storage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for storage use.
+      costs_data_transfer:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for data transfer.
+      queue_time:
+        $ref: '#/definitions/tesDuration'
+        description: |-
+          Given the current load on this TES instance, returns an estimate of
+          the time that a task with the given resource requirements will spend
+          in the task queue.
+    description: |-
+      Given a set of resource requirements, returns the estimated queue time
+      and total incurred costs. Allows informed decisions with regard to which
+      TES instance a given task should be sent to.
   tesTaskLog:
     type: object
     properties:
@@ -644,37 +682,3 @@ definitions:
     - logs
     - outputs
     readOnly: true
-  tesTaskInfo:
-    type: object
-    properties:
-      costs_total:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated total incurred costs for running a task with the given
-          resource requirements on this TES instance.
-      costs_computation:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for CPU use.
-      costs_memory:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for memory consumption.
-      costs_storage:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for storage use.
-      costs_data_transfer:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for data transfer.
-      queuing_time:
-        $ref: '#/definitions/tesDuration'
-        description: |-
-          Given the current load on this TES instance, returns an estimate of
-          the time that a task with the given resource requirements will spend
-          in the task queue.
-    description: |-
-      Given a set of resource requirements, returns the estimated queuing
-      time and total incurred costs. Allows informed decisions with regard
-      to which TES instance a given task should be sent to.

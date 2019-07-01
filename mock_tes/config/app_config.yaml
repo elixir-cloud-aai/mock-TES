@@ -1,0 +1,19 @@
+# General server settings
+server:
+    host: localhost
+    port: 9001
+    debug: True
+
+# OpenAPI specs
+openapi:
+    path: specs/schema.task_execution_service.d55bf88.openapi.modified.yaml
+
+# TES service info settings
+task_info:
+    time_unit: SECONDS
+    currency: ARBITRARY
+    unit_costs:  # per min
+        cpu_usage: 1  # per core
+        memory_consumption: 1  # per GB
+        data_storage: 1  # per GB
+        data_transfer: 1  # per GB
