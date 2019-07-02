@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+
+  mock-tes:
+    image: mock-tes:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    command: bash -c "cd /app/; python mock_tes/Server.py"
+
