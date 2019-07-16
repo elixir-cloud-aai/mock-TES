@@ -16,4 +16,4 @@ task_info:
         cpu_usage: 1  # per core
         memory_consumption: 1  # per GB
         data_storage: 1  # per GB
-        data_transfer: 1  # per GB
+        data_transfer: 0.01  # per GB and 1000 km

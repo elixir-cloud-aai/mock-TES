@@ -47,13 +47,12 @@ def __get_task_info(resources, params):
     Helper function to estimate task queueing time and costs and build the
     response object (tesTaskInfo object).
     '''
-    costs = __get_costs(
+    costs = __get_compute_costs(
         resources=resources,
         currency=params['currency'],
         unit_costs_cores=params['unit_costs']['cpu_usage'],
         unit_costs_memory=params['unit_costs']['memory_consumption'],
-        unit_costs_storage=params['unit_costs']['data_storage'],
-        unit_costs_transfer=params['unit_costs']['data_transfer']
+        unit_costs_storage=params['unit_costs']['data_storage']
     )
     queue_time = __get_queue_time(
         resources=resources,
@@ -64,18 +63,20 @@ def __get_task_info(resources, params):
         'costs_cpu_usage': costs['cpu_usage'],
         'costs_memory_consumption': costs['memory_consumption'],
         'costs_data_storage': costs['data_storage'],
-        'costs_data_transfer': costs['data_transfer'],
+        'costs_data_transfer': {
+		'amount': params['unit_costs']['data_transfer'],
+		'currency': params['currency']
+	},
         'queue_time': queue_time
     }
 
 
-def __get_costs(
+def __get_compute_costs(
     resources,
     currency='ARBITRARY',
     unit_costs_cores=0,
     unit_costs_memory=0,
-    unit_costs_storage=0,
-    unit_costs_transfer=0
+    unit_costs_storage=0
 ):
     '''
     Helper function to estimate task costs from tesResources object. Returns a
@@ -91,10 +92,9 @@ def __get_costs(
     c_cores = t * cores * unit_costs_cores
     c_mem = t * mem * unit_costs_memory
     c_storage = t * size * unit_costs_storage
-    c_transfer = 0  # TODO: Implement later; file sizes required
 
     # Calculate total costs
-    c_total = c_cores + c_mem + c_storage + c_transfer
+    c_total = c_cores + c_mem + c_storage
 
     # Return dictionary of tesCosts objects
     return {
@@ -113,11 +113,7 @@ def __get_costs(
         'data_storage': {
             'amount': c_storage,
             'currency': currency
-        },
-        'data_transfer': {
-            'amount': c_transfer,
-            'currency': currency
-        },
+        }
     }
 
 
