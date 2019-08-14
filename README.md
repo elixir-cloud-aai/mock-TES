@@ -73,8 +73,8 @@ and returns an object tesTaskInfo with properties:
       
 ## Usage
 
-Once deployed and started (see below), the service is available here:
-<http://localhost:9001/ga4gh/tes/v1/>
+Once deployed (if no modification is made to the port in the [config.yaml](mock_tes/config/app_config.yaml)) and started 
+(see below), the service is available at <http://localhost:9001/ga4gh/tes/v1/>
 
 > Note that host and port may differ depending on the values specified in:
 `mock_tes/config/app_config.yaml`
