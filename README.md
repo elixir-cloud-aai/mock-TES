@@ -15,12 +15,66 @@ valid response (typically an empty JSON object).
 
 ### Modified TES specs
 
-Coming soon...
-
+```yaml
+/tasks/task-info:
+    post:
+      summary: |-
+        Provides estimates for the queue time and incurred costs for a task
+        with the given resource requirements.
+      operationId: GetTaskInfo
+```
+The added endpoint, GetTaskInfo which given a set of resource requirements, returns the estimated queue time and total incurred costs. Allows informed 
+decisions with regard to which TES instance a given task should be sent to. Which is described as :
+```yaml
+ tesResources:
+    type: object
+    properties:
+      execution_time_min:
+        type: integer
+        format: int64
+        description: Requested execution in minutes (min)
+      cpu_cores:
+        type: integer
+        format: int64
+        description: Requested number of CPUs
+      preemptible:
+        type: boolean
+        format: boolean
+        description: Is the task allowed to run on preemptible compute instances (e.g. AWS Spot)?
+      ram_gb:
+        type: number
+        format: double
+        description: Requested RAM required in gigabytes (GB)
+      disk_gb:
+        type: number
+        format: double
+        description: Requested disk size in gigabytes (GB)
+      zones:
+        type: array
+        items:
+          type: string
+        description: Request that the task be run in these compute zones.
+    description: Resources describes the resources requested by a task.
+```
+and returns an object tesTaskInfo with properties:
+* costs_total:
+    Estimated total incurred costs for running a task with the given resource requirements on this TES instance.
+* costs_cpu_usage:
+    Estimated incurred costs for CPU use.
+* costs_memory_consumption:
+    Estimated incurred costs for memory consumption.
+* costs_data_storage:
+    Estimated incurred costs for storage use.
+* costs_data_transfer:
+    Estimated incurred costs for data transfer.
+* queue_time :
+    Given the current load on this TES instance, returns an estimate of the time that a task with the given resource
+    requirements will spend in the task queue.
+      
 ## Usage
 
-Once deployed and started (see below), the service is available here:
-<http://localhost:9001/ga4gh/tes/v1/>
+Once deployed (if no modification is made to the port in the [config.yaml](mock_tes/config/app_config.yaml)) and started 
+(see below), the service is available at <http://localhost:9001/ga4gh/tes/v1/>
 
 > Note that host and port may differ depending on the values specified in:
 `mock_tes/config/app_config.yaml`

@@ -107,3 +107,9 @@ venv.bak/
 .idea/modules.xml
 .idea/vcs.xml
 .idea/workspace.xml
+
+## macOS
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
