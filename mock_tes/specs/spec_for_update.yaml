@@ -19,8 +19,8 @@ produces:
 paths:
   /UpdateCosts:
     post:
-      summary: Create new parameters
-      operationId: createnew
+      summary: Update Costs in the config 
+      operationId: UpdateCosts
       consumes:
         - application/json
       produces:

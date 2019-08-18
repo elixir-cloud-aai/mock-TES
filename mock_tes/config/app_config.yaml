@@ -7,6 +7,7 @@ server:
 # OpenAPI specs
 openapi:
     path: specs/schema.task_execution_service.d55bf88.openapi.modified.yaml
+    updates : specs/spec_for_update.yaml
 
 # TES service info settings
 task_info:
