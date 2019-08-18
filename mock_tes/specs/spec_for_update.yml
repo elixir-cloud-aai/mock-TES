@@ -1,0 +1,78 @@
+swagger: '2.0'
+basePath: '/ga4gh/drs/v1'
+info:
+  title: Task Execution Service Config Updates
+  version: 0.1.0
+  description: 'https://github.com/elixir-europe/mock-TES'
+  termsOfService: ''
+  contact:
+    name: 'https://github.com/elixir-europe/mock-TES/contributors'
+  license:
+    name: Apache 2.0
+    url: 'https://github.com/elixir-europe/mock-TES/blob/master/LICENSE'
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /UpdateCosts:
+    post:
+      summary: Create new parameters
+      operationId: createnew
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: ''
+          schema:
+            $ref: '#/definitions/CostsUpdate'
+          required: true
+      responses:
+        200:
+          description: "200 response"
+          examples:
+            application/json:
+             {
+               "status": "Update Successful"
+             }
+      tags:
+        - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
+definitions:
+  CostsUpdate:
+    type: object
+    properties:
+      currency:
+        type: string
+        enum:
+          - ARBITRARY
+          - BTC
+          - EUR
+          - USD
+        description: 'the currency that all following costs will be specified in '
+      costs:
+        $ref: '#/definitions/TesCosts'
+  TesCosts:
+    type: object
+    properties:
+      cpu_usage:
+        type: integer
+        format: int64
+        description: costs per core
+      memory_consumption:
+        type: integer
+        format: int64
+        description: costs of computation per GB
+      data_storage:
+        type: integer
+        format: int64
+        description:  cost of data storage  GB
+      data_transfer:
+        type: integer
+        format: int64
+        description: cost of data transfer per GB and 1000 km
