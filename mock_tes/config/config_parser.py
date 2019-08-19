@@ -5,9 +5,8 @@ import logging
 import os
 from typing import (Any, List, Mapping)
 
-import yaml
-
 from addict import Dict
+import yaml
 
 
 class YAMLConfigParser(Dict):

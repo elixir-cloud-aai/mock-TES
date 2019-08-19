@@ -27,7 +27,7 @@ wget http://localhost:9001/ga4gh/tes/v1/swagger.json
 > Note that host and port can be set manually in the [config] file. In that
 > case, the values in the URLs above need to be replaced as well.
 
-You can use the client [TES-cli] to send requests to the service.
+The client [TES-cli] can be used to send requests to the service.
 
 ## Deployment
 
@@ -279,6 +279,89 @@ which are described as follows:
     description: Generic object specifying a length of time.
 ```
 
+### Service configuration
+
+The service can be configured with different unit costs for CPU and memory
+usage, data transfer and storage. Default values for the corresponding
+parameters are listed in `task_info` section of the service's [config] and they
+can be edited by the user before starting the service.
+
+Alternatively (and preferably), these parameters can be modified in the running
+service via the `/update-config` endpoint, which is particularly useful for
+setting up environments for various testing scenarios for [TEStribute]. The
+endpoint is defined in the [config specifications]:
+
+```yaml
+  /update-config:
+    post:
+      summary: Update task info config
+      operationId: UpdateTaskInfoConfig
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/tesTaskInfoConfig'
+          required: true
+          description: ''
+      tags:
+        - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
+```
+
+It relies on the following models:
+
+```yaml
+  tesTaskInfoConfig:
+    type: object
+    properties:
+      currency:
+        type: string
+        enum: 
+          - ARBITRARY
+          - BTC
+          - EUR
+          - USD
+        description: Currency/unit of the costs.
+      time_unit:
+        type: string
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
+        description: Unit of the queue time.
+      unit_costs:
+        $ref: '#/definitions/tesTaskInfoCosts'
+  tesTaskInfoCosts:
+    type: object
+    properties:
+      cpu_usage:
+        type: integer
+        format: int64
+        description: costs per core
+      memory_consumption:
+        type: integer
+        format: int64
+        description: costs of computation per GB
+      data_storage:
+        type: integer
+        format: int64
+        description:  cost of data storage  GB
+      data_transfer:
+        type: integer
+        format: int64
+        description: cost of data transfer per GB and 1000 km
+```
+
+[TES-cli] can be used to update the task info parameters.
+
+> Note that while the `/update-config` endpoint can be accessed via the same
+> root URI (and explored via the Swagger UI), it was not included in the
+> [modified TES specifications], but rather added to it _on the fly_ when the
+> service is started.
+
 ## Contributing
 
 This project is a community effort and lives off your contributions, be it in
@@ -313,11 +396,13 @@ of the [Global Alliance for Genomics and Health] [organization].
 
 ![logo banner]
 
+
 [1]: LICENSE
 [2019 Google Summer of Code]: <https://summerofcode.withgoogle.com/projects/#6613336345542656>
 [Apache License 2.0]: <https://www.apache.org/licenses/LICENSE-2.0>
 [code of conduct]: CODE_OF_CONDUCT.md
 [config]: mock_tes/config/app_config.yaml
+[config_specs]: mock_tes/specs/schema.task_execution_service.config_update.openapi.yaml
 [Connexion]: <https://github.com/zalando/connexion>
 [contributing guidelines]: CONTRIBUTING.md
 [`d55bf88`]: <https://github.com/ga4gh/task-execution-schemas/tree/d55bf880062442288afc95665aa0e21fbba77b20>
@@ -328,6 +413,7 @@ of the [Global Alliance for Genomics and Health] [organization].
 [Global Alliance for Genomics and Health]: <https://www.ga4gh.org/>
 [logo banner]: logos/logo-banner.svg
 [modified specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.modified.yaml
+[modified TES specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.modified.yaml
 [OpenAPI]: <https://swagger.io/specification/>
 [organization]: <https://summerofcode.withgoogle.com/organizations/6643588285333504/>
 [pip]: <https://pip.pypa.io/en/stable/installing/>

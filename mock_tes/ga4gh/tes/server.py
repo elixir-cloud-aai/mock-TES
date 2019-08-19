@@ -5,8 +5,10 @@ import json
 import logging
 from random import randint
 
+from addict import Dict
 from connexion import request
 from flask import current_app
+from werkzeug.exceptions import BadRequest
 
 
 def GetTaskInfo(body):  # noqa: E501
@@ -40,6 +42,14 @@ def GetTask(id, view=None):  # noqa: E501
 def ListTasks(name_prefix=None, page_size=None, page_token=None, view=None):  # noqa: E501
     # Not implemented
     return {'tasks': []}
+
+
+def UpdateTaskInfoConfig(body):  # noqa: E501
+    current_app.config["task_info"] = __update_task_info_config(
+        config_new=body,
+        config_old=current_app.config["task_info"],
+    )
+    return current_app.config["task_info"]
 
 
 def __get_task_info(resources, params):
@@ -128,3 +138,29 @@ def __get_queue_time(resources, time_unit):
         'duration': duration,
         'unit': unit
     }
+
+
+def __update_task_info_config(config_new, config_old):
+    '''
+    Helper function that updates the task info configuration given the old and
+    new config.
+    '''
+    if __hasExtraKeys(config_new, config_old):
+        raise BadRequest
+    else:
+        config_old = Dict(config_old)
+        config_old.update(config_new)
+        return config_old
+
+
+def __hasExtraKeys(query, ref):
+    '''
+    Helper function that returns `True` if dictionary `query` contains keys
+    that dictionary `ref` does not contain. Works recursively.
+    '''
+    for key in query:
+       if key not in ref:
+           return True
+       elif isinstance(query[key], dict):
+           return __hasExtraKeys(query[key], ref[key])
+    return False
