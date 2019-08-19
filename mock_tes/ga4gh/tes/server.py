@@ -130,6 +130,7 @@ def __get_queue_time(resources, time_unit):
     }
 
 
-def UpdateCosts(request:dict):  # noqa: E501
-    # Not implemented
-    return {}
+def UpdateCosts(body):  # noqa: E501
+    current_app.config["currency"] = body["currency"]
+    current_app.config["task_info"]["unit_costs"] = body["costs"]
+    return {200: "Updated"}
