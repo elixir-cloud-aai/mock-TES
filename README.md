@@ -396,6 +396,7 @@ of the [Global Alliance for Genomics and Health] [organization].
 
 ![logo banner]
 
+
 [1]: LICENSE
 [2019 Google Summer of Code]: <https://summerofcode.withgoogle.com/projects/#6613336345542656>
 [Apache License 2.0]: <https://www.apache.org/licenses/LICENSE-2.0>
