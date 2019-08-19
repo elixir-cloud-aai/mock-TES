@@ -2,9 +2,10 @@
 
 [Connexion](https://github.com/zalando/connexion)-based mockup service implementing parts of the GA4GH Task Execution
 Service API schema. The service was developed to implement and test [TEStribute](https://github.com/elixir-europe/TEStribute),
-a task distribution logic package for TES instances. It features an extended
-TES specification to provide parameters required for the model underlying the
-task distribution logic.
+a task distribution logic package for TES instances. It features an [extended
+TES specification](mock_tes/specs/schema.task_execution_service.d55bf88.openapi.modified.yaml) to provide parameters required for the model underlying the
+task distribution logic a copy of the [original specs](mock_tes/specs/schema.task_execution_service.d55bf88.openapi.yaml)
+is also present in the repo.
 
 ## Implementation
 
@@ -70,6 +71,10 @@ and returns an object tesTaskInfo with properties:
 * queue_time :
     Given the current load on this TES instance, returns an estimate of the time that a task with the given resource
     requirements will spend in the task queue.
+   
+another set of [specs](/mock_tes/specs/spec_for_update.yaml) are used to allow the user to access an endpoint ```CostsUpdate```
+to allow the modification of costs without the redeployment of the service. (You can use the same Swagger ui to (explained 
+below) to explore their functionality as for the [modified-TES](/mock_tes/specs/schema.task_execution_service.d55bf88.openapi.modified.yaml) specs.
       
 ## Usage
 
