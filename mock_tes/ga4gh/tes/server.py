@@ -128,3 +128,8 @@ def __get_queue_time(resources, time_unit):
         'duration': duration,
         'unit': unit
     }
+
+
+def UpdateCosts(request:dict):  # noqa: E501
+    # Not implemented
+    return {}

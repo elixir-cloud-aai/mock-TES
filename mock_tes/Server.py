@@ -7,6 +7,7 @@ from connexion import App
 
 from config.app_config import parse_app_config
 
+from specsynthase.specbuilder import SpecBuilder
 
 # Instantiate app object
 app = App(
@@ -49,7 +50,9 @@ def add_settings(app):
 def add_openapi(app):
     """Add OpenAPI specification to connexion app instance"""
     try:
-        app.add_api(config["openapi"]["path"], validate_responses=True)
+        spec = SpecBuilder().add_spec(config["openapi"]["path"])\
+                .add_spec(config["openapi"]["updates"])
+        app.add_api(spec, validate_responses=True)
     except KeyError:
         sys.exit("Config file corrupt. Execution aborted.")
 

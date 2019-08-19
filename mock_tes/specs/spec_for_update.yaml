@@ -1,25 +1,7 @@
-swagger: '2.0'
-basePath: '/ga4gh/drs/v1'
-info:
-  title: Task Execution Service Config Updates
-  version: 0.1.0
-  description: 'https://github.com/elixir-europe/mock-TES'
-  termsOfService: ''
-  contact:
-    name: 'https://github.com/elixir-europe/mock-TES/contributors'
-  license:
-    name: Apache 2.0
-    url: 'https://github.com/elixir-europe/mock-TES/blob/master/LICENSE'
-schemes:
-  - http
-consumes:
-  - application/json
-produces:
-  - application/json
 paths:
   /UpdateCosts:
     post:
-      summary: Update Costs in the config 
+      summary: Update Costs in the config
       operationId: UpdateCosts
       consumes:
         - application/json
