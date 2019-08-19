@@ -299,6 +299,8 @@ endpoint is defined in the [config specifications]:
       responses:
         '200':
           description: ''
+          schema:
+            $ref: '#/definitions/tesTaskInfoConfig'
       parameters:
         - name: body
           in: body
@@ -319,7 +321,7 @@ It relies on the following models:
     properties:
       currency:
         type: string
-        enum: 
+        enum:
           - ARBITRARY
           - BTC
           - EUR
@@ -328,7 +330,7 @@ It relies on the following models:
       time_unit:
         type: string
         enum:
-          - SECONDS 
+          - SECONDS
           - MINUTES
           - HOURS
         description: Unit of the queue time.
@@ -396,8 +398,6 @@ of the [Global Alliance for Genomics and Health] [organization].
 
 ![logo banner]
 
-
-[1]: LICENSE
 [2019 Google Summer of Code]: <https://summerofcode.withgoogle.com/projects/#6613336345542656>
 [Apache License 2.0]: <https://www.apache.org/licenses/LICENSE-2.0>
 [code of conduct]: CODE_OF_CONDUCT.md
