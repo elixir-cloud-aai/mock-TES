@@ -6,6 +6,8 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            $ref: '#/definitions/tesTaskInfoConfig'
       parameters:
         - name: body
           in: body
