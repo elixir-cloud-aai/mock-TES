@@ -1,45 +1,43 @@
 paths:
-  /UpdateCosts:
+  /update-config:
     post:
-      summary: Update Costs in the config
-      operationId: UpdateCosts
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      summary: Update task info config
+      operationId: UpdateTaskInfoConfig
+      responses:
+        '200':
+          description: ''
       parameters:
         - name: body
           in: body
-          description: ''
           schema:
-            $ref: '#/definitions/CostsUpdate'
+            $ref: '#/definitions/tesTaskInfoConfig'
           required: true
-      responses:
-        200:
-          description: "200 response"
-          examples:
-            application/json:
-             {
-               "status": "Update Successful"
-             }
+          description: ''
       tags:
         - TaskService
       x-swagger-router-controller: ga4gh.tes.server
 definitions:
-  CostsUpdate:
+  tesTaskInfoConfig:
     type: object
     properties:
       currency:
         type: string
-        enum:
+        enum: 
           - ARBITRARY
           - BTC
           - EUR
           - USD
-        description: 'the currency that all following costs will be specified in '
-      costs:
-        $ref: '#/definitions/TesCosts'
-  TesCosts:
+        description: Currency/unit of the costs.
+      time_unit:
+        type: string
+        enum:
+          - SECONDS 
+          - MINUTES
+          - HOURS
+        description: Unit of the queue time.
+      unit_costs:
+        $ref: '#/definitions/tesTaskInfoCosts'
+  tesTaskInfoCosts:
     type: object
     properties:
       cpu_usage:

@@ -1,13 +1,14 @@
 """
 Mock service for the GA4GH Task Execution Schema.
 """
+import os
 import sys
 
 from connexion import App
-
-from config.app_config import parse_app_config
-
 from specsynthase.specbuilder import SpecBuilder
+
+from mock_tes.config.app_config import parse_app_config
+
 
 # Instantiate app object
 app = App(
@@ -50,9 +51,14 @@ def add_settings(app):
 def add_openapi(app):
     """Add OpenAPI specification to connexion app instance"""
     try:
-        spec = SpecBuilder().add_spec(config["openapi"]["path"])\
-                .add_spec(config["openapi"]["updates"])
-        app.add_api(spec, validate_responses=True)
+        specs = SpecBuilder()\
+                .add_spec(config["openapi"]["tes"])\
+                .add_spec(config["openapi"]["cost_update"])
+        app.add_api(
+            specs,
+            validate_responses=True,
+            strict_validation=True,
+        )
     except KeyError:
         sys.exit("Config file corrupt. Execution aborted.")
 

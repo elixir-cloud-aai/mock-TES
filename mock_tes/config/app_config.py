@@ -5,7 +5,7 @@ modules to set a config dict across the app
 import os
 from typing import Optional
 
-from config.config_parser import YAMLConfigParser
+from mock_tes.config.config_parser import YAMLConfigParser
 
 
 def parse_app_config(
