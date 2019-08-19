@@ -1,19 +1,137 @@
 # mock-TES
 
-[Connexion](https://github.com/zalando/connexion)-based mockup service implementing parts of the GA4GH Task Execution
-Service API schema. The service was developed to implement and test [TEStribute](https://github.com/elixir-europe/TEStribute),
-a task distribution logic package for TES instances. It features an extended
-TES specification to provide parameters required for the model underlying the
-task distribution logic.
+[Connexion]-based mockup service implementing parts of the GA4GH [Task Execution
+Service] (TES) API schema. The service was developed to implement and test
+[TEStribute], a task distribution logic package for TES instances. It features
+an extended TES specification to provide parameters required for the model
+underlying the task distribution logic.
 
-## Implementation
+## Usage
 
-Not that only those parts of the service are implemented that are required for
-developing, testing and debugging [TEStribute](https://github.com/elixir-europe/TEStribute).
-For all other endpoints only stubs are implemented that return the most basic
-valid response (typically an empty JSON object).
+Once deployed and started ([see below](#Deployment)), the service will be
+available at:  
+<http://localhost:9001/ga4gh/tes/v1/>
 
-### Modified TES specs
+You can explore the service via the Swagger UI:
+
+```bash
+firefox http://localhost:9001/ga4gh/tes/v1/ui/
+```
+
+The specifications, in JSON format, can be retrieved with:
+
+```bash
+wget http://localhost:9001/ga4gh/tes/v1/swagger.json
+```
+
+> Note that host and port can be set manually in the [config] file. In that
+> case, the values in the URLs above need to be replaced as well.
+
+You can use the client [TES-cli] to send requests to the service.
+
+## Deployment
+
+`mock-TES` can be deployed via containers (preferred) or after manual
+installation of all dependencies.
+
+In both cases, the repository first needs to be cloned with:
+
+```bash
+git clone git@github.com:elixir-europe/mock-TES.git
+```
+
+Afterwards traverse to the repository's root directory:
+
+```bash
+cd mock-TES
+```
+
+### Containerized deployment
+
+> "Production-like" containerized deployment without HTTP server/load balancer
+> etc.
+
+#### Requirements (Dockerized deployment)
+
+* [Git] (tested with version 2.17.1)
+* [Docker] (tested with version 18.09.6)
+* [docker-compose] (tested with version 1.24.0)
+
+#### Building & starting the service
+
+```bash
+# Build application image
+# [NOTE] Image re-building is not always necessary. Inspect the `Dockerfile`
+#        to check which changes will need re-building.
+docker-compose build
+# Start service
+docker-compose up -d
+```
+
+#### Other useful commands
+
+```bash
+# Check logs
+docker-compose logs
+# Shut down service
+docker-compose down
+```
+
+### Non-containerized deployment
+
+> Deployment for local development without containers, HTTP server/load
+> balancer etc.
+
+#### Requirements
+
+* [Git] (tested with version 2.17.1)
+* [Python] (tested with versions 2.7.15+ & 3.6.8)
+* [pip] (tested with version 19.1.1)
+* [virtualenv] (tested with version 15.1.0)
+
+#### Installing & starting the service
+
+```bash
+# Set up Python virtual environment
+virtualenv -p `which python3` venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install app
+python setup.py develop
+
+# Run service
+python mock_tes/Server.py
+```
+
+## Implementation details
+
+Note that only those parts of the service are implemented that are required for
+developing, testing and debugging [TEStribute]. For all other endpoints only
+stubs are implemented that return the most basic valid response (typically an
+"empty" JSON object).
+
+### Modifications to TES specs
+
+An endpoint `/tasks/task-info` was added to commit [`d55bf88`] of the [Task
+Execution Service] [OpenAPI] specification. It provides parameters required for
+[TEStribute]'s task distribution logic.
+
+The [modified specifications] as well as a snapshot of the [unmodified
+specifications] are available in this repository.
+
+This section outlines the definitions of the endpoint and underlying request
+and response models.
+
+#### Endpoint `/tasks/task-info`
+
+The endpoint `/tasks/task-info` returns estimations of queue time and incurred
+costs if a task with a given set of resource requirements were to be computed
+on this TES instance right now. Within the framework of [TEStribute], these
+parameters allow informed decisions with regards to which of a number of TES
+instances a given task should be sent to. The endpoint is defined by:
 
 ```yaml
 /tasks/task-info:
@@ -22,9 +140,27 @@ valid response (typically an empty JSON object).
         Provides estimates for the queue time and incurred costs for a task
         with the given resource requirements.
       operationId: GetTaskInfo
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/tesTaskInfo'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/tesResources'
+      tags:
+        - TaskService
+      x-swagger-router-controller: ga4gh.tes.server
 ```
-The added endpoint, GetTaskInfo which given a set of resource requirements, returns the estimated queue time and total incurred costs. Allows informed 
-decisions with regard to which TES instance a given task should be sent to. Which is described as :
+
+#### Request model `tesResources`
+
+A property `execution_time_min` was added to the model describing a task's
+resource requirements. The entire model is now defined as follows:
+
 ```yaml
  tesResources:
     type: object
@@ -56,104 +192,149 @@ decisions with regard to which TES instance a given task should be sent to. Whic
         description: Request that the task be run in these compute zones.
     description: Resources describes the resources requested by a task.
 ```
-and returns an object tesTaskInfo with properties:
-* costs_total:
-    Estimated total incurred costs for running a task with the given resource requirements on this TES instance.
-* costs_cpu_usage:
-    Estimated incurred costs for CPU use.
-* costs_memory_consumption:
-    Estimated incurred costs for memory consumption.
-* costs_data_storage:
-    Estimated incurred costs for storage use.
-* costs_data_transfer:
-    Estimated incurred costs for data transfer.
-* queue_time :
-    Given the current load on this TES instance, returns an estimate of the time that a task with the given resource
-    requirements will spend in the task queue.
-      
-## Usage
 
-Once deployed (if no modification is made to the port in the [config.yaml](mock_tes/config/app_config.yaml)) and started 
-(see below), the service is available at <http://localhost:9001/ga4gh/tes/v1/>
+#### Response model `tesTaskInfo`
 
-> Note that host and port may differ depending on the values specified in:
-`mock_tes/config/app_config.yaml`
+A valid request to the endpoint results in a response defined in the following
+model:
 
-Explore the service via the Swagger UI:
-
-```bash
-firefox http://localhost:9001/ga4gh/tes/v1/ui/
+```yaml
+  tesTaskInfo:
+    type: object
+    properties:
+      costs_total:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated total incurred costs for running a task with the given
+          resource requirements on this TES instance.
+      costs_cpu_usage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for CPU use.
+      costs_memory_consumption:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for memory consumption.
+      costs_data_storage:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated incurred costs for storage use.
+      costs_data_transfer:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Unit costs for transferring 1 GB of data across 1000 km.
+      queue_time:
+        $ref: '#/definitions/tesDuration'
+        description: |-
+          Given the current load on this TES instance, returns an estimate of
+          the time that a task with the given resource requirements will spend
+          in the task queue.
+    description: |-
+      Given a set of resource requirements, returns the estimated queue time
+      and total incurred costs. Allows informed decisions with regard to which
+      TES instance a given task should be sent to.
 ```
 
-Download/access the specs in JSON format:
+The response model relies on additional models `tesCosts` and `tesDuration`
+which are described as follows:
 
-```bash
-wget http://localhost:9001/ga4gh/tes/v1/swagger.json
+##### `tesCosts`
+
+```yaml
+  tesCosts:
+    type: object
+    properties:
+      amount:
+        type: number
+        format: double
+        description: Numeric value specifying an amount of money.
+      currency:
+        type: string
+        enum:
+          - ARBITRARY
+          - BTC
+          - EUR
+          - USD
+        description: Currency/unit of the costs.
+    description: Generic object specifying an amount of money.
 ```
 
-You can use the TES client [TES-cli](https://github.com/elixir-europe/TES-cli) to send requests to the service.
+##### `tesDuration`
 
-## Deployment
-
-### Dockerized
-
-> "Production-like" containerized deployment without HTTP server/load balancer etc.
-
-#### Requirements
-
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (tested with version 2.17.1)
-- [Docker](https://docs.docker.com/install/) (tested with version 18.09.6)
-- [docker-compose](https://docs.docker.com/compose/install/) (tested with version 1.24.0)
-
-#### Building & starting the service
-
-```bash
-# Build application image
-# [NOTE] Image re-building is not always necessary. Inspect the `Dockerfile`
-#        to check which changes will need re-building.
-docker-compose build
-# Start service
-docker-compose up -d
+```yaml
+  tesDuration:
+    type: object
+    properties:
+      duration:
+        type: integer
+        format: int64
+        description: Integer value specifying a length of time.
+      unit:
+        type: string
+        enum:
+          - SECONDS
+          - MINUTES
+          - HOURS
+        description: Unit of the duration.
+    description: Generic object specifying a length of time.
 ```
 
-#### Other useful commands
+## Contributing
 
-```bash
-# Check logs
-docker-compose logs
-# Shut down service
-docker-compose down
-```
+This project is a community effort and lives off your contributions, be it in
+the form of bug reports, feature requests, discussions, or fixes and other code
+changes. Please read the [contributing guidelines] if you want to contribute.
+And please mind the [code of conduct] for all interactions with the community.
 
-### Non-dockerized
+## Versioning
 
-> Deployment for local development without containers, HTTP server/load balancer etc.
-> Does **not** require Nginx or any certificates (HTTP only).
+Development of the app is currently still in alpha stage, and current versioning
+is for internal use only. In the future, we are aiming to adopt [semantic
+versioning] that is synchronized to the versioning of [TEStribute] and
+[TES-cli] in order to ensure that these apps will be compatible as long as both
+their major and minor versions match.
 
-#### Requirements
+## License
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (tested with version 2.17.1)
-- [Python](https://www.python.org/downloads/) (tested with versions 2.7.15+ & 3.6.8)
-- [pip](https://pip.pypa.io/en/stable/installing/) (tested with version 19.1.1)
-- [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) (tested with version 15.1.0)
+This project is covered by the [Apache License 2.0] also available [shippied
+with this repository](LICENSE).
 
-#### Installing & starting the service
+## Contact
 
-```bash
-# Clone repository
-git clone git@github.com:elixir-europe/WES-ELIXIR.git
-cd mock-TES
+Please contact the [project leader](mailto:alexander.kanitz@sib.swiss) for
+inquiries, proposals, questions etc. that are not covered by the
+[Contributing](#Contributing) section.
 
-# Set up Python virtual environment
-virtualenv -p `which python3` venv
-source venv/bin/activate
+## Acknowledgments
 
-# Install dependencies
-pip install -r requirements.txt
+The project is a collaborative effort under the umbrella of the [ELIXIR Cloud
+and AAI] group. It was started during the [2019 Google Summer of Code] as part
+of the [Global Alliance for Genomics and Health] [organization].
 
-# Install app
-python setup.py develop
+![logo banner]
 
-# Run service
-python mock_tes/Server.py
-```
+[1]: LICENSE
+[2019 Google Summer of Code]: <https://summerofcode.withgoogle.com/projects/#6613336345542656>
+[Apache License 2.0]: <https://www.apache.org/licenses/LICENSE-2.0>
+[code of conduct]: CODE_OF_CONDUCT.md
+[config]: mock_tes/config/app_config.yaml
+[Connexion]: <https://github.com/zalando/connexion>
+[contributing guidelines]: CONTRIBUTING.md
+[`d55bf88`]: <https://github.com/ga4gh/task-execution-schemas/tree/d55bf880062442288afc95665aa0e21fbba77b20>
+[Docker]: <https://docs.docker.com/install/>
+[docker-compose]: <https://docs.docker.com/compose/install/>
+[ELIXIR Cloud and AAI]: <https://elixir-europe.github.io/cloud/>
+[Git]: <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>
+[Global Alliance for Genomics and Health]: <https://www.ga4gh.org/>
+[logo banner]: logos/logo-banner.svg
+[modified specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.modified.yaml
+[OpenAPI]: <https://swagger.io/specification/>
+[organization]: <https://summerofcode.withgoogle.com/organizations/6643588285333504/>
+[pip]: <https://pip.pypa.io/en/stable/installing/>
+[Python]: <https://www.python.org/downloads/>
+[semantic versioning]: <https://semver.org/>
+[Task Execution Service]: <https://github.com/ga4gh/task-execution-schemas>
+[TES-cli]: <https://github.com/ga4gh/task-execution-schemas>
+[TEStribute]: <https://github.com/elixir-europe/TEStribute>
+[unmodified specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.yaml
+[virtualenv]: <https://virtualenv.pypa.io/en/stable/installation/>
