@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 ##### METADATA #####
 LABEL base.image="ubuntu:16.04"
 LABEL version="1.1"
-LABEL software="mock-DRS"
+LABEL software="mock-TES"
 LABEL software.version="1.0"
 LABEL software.description="Microservice implementing the Global Alliance for Genomics and Health (GA4GH) Teask Execution Schema (TES) API specification."
 LABEL software.website="https://github.com/elixir-europe/mock-TES"
