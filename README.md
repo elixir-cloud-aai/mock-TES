@@ -289,7 +289,7 @@ can be edited by the user before starting the service.
 Alternatively (and preferably), these parameters can be modified in the running
 service via the `/update-config` endpoint, which is particularly useful for
 setting up environments for various testing scenarios for [TEStribute]. The
-endpoint is defined in the [config specifications]:
+endpoint is defined in the [update config] [OpenAPI] specifications:
 
 ```yaml
   /update-config:
@@ -357,11 +357,11 @@ It relies on the following models:
         description: cost of data transfer per GB and 1000 km
 ```
 
-[TES-cli] can be used to update the task info parameters.
+[TES-cli] can be used to communicate with the `/update-config` endpoint.
 
 > Note that while the `/update-config` endpoint can be accessed via the same
 > root URI (and explored via the Swagger UI), it was not included in the
-> [modified TES specifications], but rather added to it _on the fly_ when the
+> [modified TES specifications], but rather is added to it _on the fly_ when the
 > service is started.
 
 ## Contributing
@@ -402,7 +402,6 @@ of the [Global Alliance for Genomics and Health] [organization].
 [Apache License 2.0]: <https://www.apache.org/licenses/LICENSE-2.0>
 [code of conduct]: CODE_OF_CONDUCT.md
 [config]: mock_tes/config/app_config.yaml
-[config_specs]: mock_tes/specs/schema.task_execution_service.config_update.openapi.yaml
 [Connexion]: <https://github.com/zalando/connexion>
 [contributing guidelines]: CONTRIBUTING.md
 [`d55bf88`]: <https://github.com/ga4gh/task-execution-schemas/tree/d55bf880062442288afc95665aa0e21fbba77b20>
@@ -423,4 +422,5 @@ of the [Global Alliance for Genomics and Health] [organization].
 [TES-cli]: <https://github.com/ga4gh/task-execution-schemas>
 [TEStribute]: <https://github.com/elixir-europe/TEStribute>
 [unmodified specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.yaml
+[update config]: mock_tes/specs/schema.task_execution_service.config_update.openapi.yaml
 [virtualenv]: <https://virtualenv.pypa.io/en/stable/installation/>
