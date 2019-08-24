@@ -419,7 +419,7 @@ of the [Global Alliance for Genomics and Health] [organization].
 [Python]: <https://www.python.org/downloads/>
 [semantic versioning]: <https://semver.org/>
 [Task Execution Service]: <https://github.com/ga4gh/task-execution-schemas>
-[TES-cli]: <https://github.com/ga4gh/task-execution-schemas>
+[TES-cli]: <https://github.com/elixir-europe/TES-cli>
 [TEStribute]: <https://github.com/elixir-europe/TEStribute>
 [unmodified specifications]: mock_tes/specs/schema.task_execution_service.d55bf88.openapi.yaml
 [update config]: mock_tes/specs/schema.task_execution_service.config_update.openapi.yaml
