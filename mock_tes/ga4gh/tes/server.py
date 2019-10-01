@@ -57,72 +57,69 @@ def __get_task_info(resources, params):
     Helper function to estimate task queueing time and costs and build the
     response object (tesTaskInfo object).
     '''
-    costs = __get_compute_costs(
+    costs_compute = __get_compute_costs(
         resources=resources,
         currency=params['currency'],
         unit_costs_cores=params['unit_costs']['cpu_usage'],
         unit_costs_memory=params['unit_costs']['memory_consumption'],
+    )
+    costs_storage = __get_storage_costs(
+        resources=resources,
+        currency=params['currency'],
         unit_costs_storage=params['unit_costs']['data_storage']
     )
-    queue_time = __get_queue_time()
+    time_queue = __get_queue_time()
     return {
-        'compute_costs_estimate': {
-            'amount': costs['compute'],
-            'currency': params['currency'],
-        },
+        'estimated_compute_costs': costs_compute,
+        'estimated_queue_time_sec': time_queue,
+        'estimated_storage_costs': costs_storage,
         'unit_costs_data_transfer': {
 		    'amount': params['unit_costs']['data_transfer'],
 		    'currency': params['currency'],
-	},
-        'queue_time_estimate_sec': queue_time
+	    },
     }
 
 
 def __get_compute_costs(
     resources,
-    currency='ARBITRARY',
+    currency='BTC',
     unit_costs_cores=0,
     unit_costs_memory=0,
-    unit_costs_storage=0
 ):
     '''
     Helper function to estimate task costs from tesResources object. Returns a
     dictionary of tesCosts objects.
     '''
-    # Parse resources
-    t = resources['execution_time_min']
-    cores = resources['cpu_cores']
-    mem = resources['ram_gb']
-    size = resources['disk_gb']
+    # Get execution time
+    t = resources['execution_time_sec']
 
     # Calculate partial compute costs
-    c_cores = t * cores * unit_costs_cores
-    c_mem = t * mem * unit_costs_memory
-    c_storage = t * size * unit_costs_storage
+    c_cores = t * resources['cpu_cores'] * unit_costs_cores
+    c_mem = t * resources['ram_gb'] * unit_costs_memory
 
     # Calculate total compute costs
-    c_total = c_cores + c_mem + c_storage
+    c_total = c_cores + c_mem
 
     # Return dictionary of tesCosts objects
     return {
-        'compute': {
-            'amount': c_total,
-            'currency': currency
-        },
-        'cpu_usage': {
-            'amount': c_cores,
-            'currency': currency
-        },
-        'memory_consumption': {
-            'amount': c_mem,
-            'currency': currency
-        },
-        'data_storage': {
-            'amount': c_storage,
-            'currency': currency
-        }
+        'amount': c_total,
+        'currency': currency,
     }
 
+
+def __get_storage_costs(
+    resources,
+    currency='BTC',
+    unit_costs_storage=0,
+):
+    '''
+    Helper function to estimate task storage costs from tesResources object.
+    Returns a tesCosts object.
+    '''
+    return {
+        'amount': resources['disk_gb'] * unit_costs_storage,
+        'currency': currency,
+    }
 
 def __get_queue_time():
     '''

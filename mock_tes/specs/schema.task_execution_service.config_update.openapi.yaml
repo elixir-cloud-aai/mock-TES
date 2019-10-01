@@ -46,10 +46,6 @@ definitions:
           - TRY
           - USD
           - ZAR
-          - ARBITRARY
-          - BTC
-          - EUR
-          - USD
         description: Currency/unit of the costs.
       unit_costs:
         $ref: '#/definitions/tesTaskInfoCosts'
