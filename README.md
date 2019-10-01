@@ -158,17 +158,17 @@ instances a given task should be sent to. The endpoint is defined by:
 
 #### Request model `tesResources`
 
-A property `execution_time_min` was added to the model describing a task's
+A property `execution_time_sec` was added to the model describing a task's
 resource requirements. The entire model is now defined as follows:
 
 ```yaml
  tesResources:
     type: object
     properties:
-      execution_time_min:
-        type: integer
-        format: int64
-        description: Requested execution in minutes (min)
+      execution_time_sec:
+        type: number
+        format: double
+        description: Requested execution in seconds (s)
       cpu_cores:
         type: integer
         format: int64
@@ -199,21 +199,27 @@ A valid request to the endpoint results in a response defined in the following
 model:
 
 ```yaml
-  tesTaskInfo:
     type: object
     properties:
-      compute_costs_estimate:
+      estimated_compute_costs:
         $ref: '#/definitions/tesCosts'
         description: |-
-          Estimated total incurred costs for running a task with the given
-          resource requirements on this TES instance. Excludes any data transfer
-          costs.
-      queue_time_estimate_sec:
+          Estimated total incurred compute costs for running a task with the
+          indicated resource requirements on this TES instance. Excludes data
+          storage and transfer costs.
+      estimated_storage_costs:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated total incurred data storage costs for running a task with
+          the indicated resource requirements on this TES instance. Excludes
+          compute and data transfer costs. Currently this is reported as a flat
+          fee for conceptually indefinite storage.
+      estimated_queue_time_sec:
         type: number
         format: double
         description: |-
           Given the current load on this TES instance, returns an estimate of
-          the time, in seconds (s), that a task with the given resource
+          the time, in seconds (s), that a task with the indicated resource
           requirements will spend in the task queue.
       unit_costs_data_transfer:
         $ref: '#/definitions/tesCosts'
@@ -226,9 +232,10 @@ model:
       TES instance a given task should be sent to.
 ```
 
-The response model further relies on model `tesCosts`:
-
 ##### `tesCosts`
+
+The response model further relies on model `tesCosts` which specifies an
+`amount` and a `currency` property:
 
 ```yaml
   tesCosts:
@@ -309,18 +316,28 @@ It relies on the following models:
       currency:
         type: string
         enum:
-          - ARBITRARY
+          - AUD
+          - BRL
           - BTC
+          - CAD
+          - CHF
+          - CNH
           - EUR
+          - GBP
+          - HKD
+          - INR
+          - KRW
+          - JPY
+          - MXN
+          - NOK
+          - NZD
+          - RUB
+          - SEK
+          - SGD
+          - TRY
           - USD
+          - ZAR
         description: Currency/unit of the costs.
-      time_unit:
-        type: string
-        enum:
-          - SECONDS
-          - MINUTES
-          - HOURS
-        description: Unit of the queue time.
       unit_costs:
         $ref: '#/definitions/tesTaskInfoCosts'
   tesTaskInfoCosts:

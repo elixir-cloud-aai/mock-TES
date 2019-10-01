@@ -605,18 +605,25 @@ definitions:
   tesTaskInfo:
     type: object
     properties:
-      compute_costs_estimate:
+      estimated_compute_costs:
         $ref: '#/definitions/tesCosts'
         description: |-
-          Estimated total incurred costs for running a task with the given
-          resource requirements on this TES instance. Excludes any data transfer
-          costs.
-      queue_time_estimate_sec:
+          Estimated total incurred compute costs for running a task with the
+          indicated resource requirements on this TES instance. Excludes data
+          storage and transfer costs.
+      estimated_storage_costs:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Estimated total incurred data storage costs for running a task with
+          the indicated resource requirements on this TES instance. Excludes
+          compute and data transfer costs. Currently this is reported as a flat
+          fee for conceptually indefinite storage.
+      estimated_queue_time_sec:
         type: number
         format: double
         description: |-
           Given the current load on this TES instance, returns an estimate of
-          the time, in seconds (s), that a task with the given resource
+          the time, in seconds (s), that a task with the indicated resource
           requirements will spend in the task queue.
       unit_costs_data_transfer:
         $ref: '#/definitions/tesCosts'
