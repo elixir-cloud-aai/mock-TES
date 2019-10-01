@@ -202,41 +202,31 @@ model:
   tesTaskInfo:
     type: object
     properties:
-      costs_total:
+      compute_costs_estimate:
         $ref: '#/definitions/tesCosts'
         description: |-
           Estimated total incurred costs for running a task with the given
-          resource requirements on this TES instance.
-      costs_cpu_usage:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for CPU use.
-      costs_memory_consumption:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for memory consumption.
-      costs_data_storage:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Estimated incurred costs for storage use.
-      costs_data_transfer:
-        $ref: '#/definitions/tesCosts'
-        description: |-
-          Unit costs for transferring 1 GB of data across 1000 km.
-      queue_time:
-        $ref: '#/definitions/tesDuration'
+          resource requirements on this TES instance. Excludes any data transfer
+          costs.
+      queue_time_estimate_sec:
+        type: number
+        format: double
         description: |-
           Given the current load on this TES instance, returns an estimate of
-          the time that a task with the given resource requirements will spend
-          in the task queue.
+          the time, in seconds (s), that a task with the given resource
+          requirements will spend in the task queue.
+      unit_costs_data_transfer:
+        $ref: '#/definitions/tesCosts'
+        description: |-
+          Unit costs for transferring 1 gigabyte (GB) of data (inputs, outputs)
+          across 1000 kilometers (km).
     description: |-
       Given a set of resource requirements, returns the estimated queue time
       and total incurred costs. Allows informed decisions with regard to which
       TES instance a given task should be sent to.
 ```
 
-The response model relies on additional models `tesCosts` and `tesDuration`
-which are described as follows:
+The response model further relies on model `tesCosts`:
 
 ##### `tesCosts`
 
@@ -251,32 +241,29 @@ which are described as follows:
       currency:
         type: string
         enum:
-          - ARBITRARY
+          - AUD
+          - BRL
           - BTC
+          - CAD
+          - CHF
+          - CNH
           - EUR
+          - GBP
+          - HKD
+          - INR
+          - KRW
+          - JPY
+          - MXN
+          - NOK
+          - NZD
+          - RUB
+          - SEK
+          - SGD
+          - TRY
           - USD
+          - ZAR
         description: Currency/unit of the costs.
     description: Generic object specifying an amount of money.
-```
-
-##### `tesDuration`
-
-```yaml
-  tesDuration:
-    type: object
-    properties:
-      duration:
-        type: integer
-        format: int64
-        description: Integer value specifying a length of time.
-      unit:
-        type: string
-        enum:
-          - SECONDS
-          - MINUTES
-          - HOURS
-        description: Unit of the duration.
-    description: Generic object specifying a length of time.
 ```
 
 ### Service configuration
