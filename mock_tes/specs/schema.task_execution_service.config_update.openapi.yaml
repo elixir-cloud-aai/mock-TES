@@ -24,37 +24,51 @@ definitions:
     properties:
       currency:
         type: string
-        enum: 
+        enum:
+          - AUD
+          - BRL
+          - BTC
+          - CAD
+          - CHF
+          - CNH
+          - EUR
+          - GBP
+          - HKD
+          - INR
+          - KRW
+          - JPY
+          - MXN
+          - NOK
+          - NZD
+          - RUB
+          - SEK
+          - SGD
+          - TRY
+          - USD
+          - ZAR
           - ARBITRARY
           - BTC
           - EUR
           - USD
         description: Currency/unit of the costs.
-      time_unit:
-        type: string
-        enum:
-          - SECONDS 
-          - MINUTES
-          - HOURS
-        description: Unit of the queue time.
       unit_costs:
         $ref: '#/definitions/tesTaskInfoCosts'
   tesTaskInfoCosts:
     type: object
     properties:
       cpu_usage:
-        type: integer
-        format: int64
+        type: number
+        format: double
         description: costs per core
       memory_consumption:
-        type: integer
-        format: int64
+        type: number
+        format: double
         description: costs of computation per GB
       data_storage:
-        type: integer
-        format: int64
+        type: number
+        format: double
         description:  cost of data storage  GB
       data_transfer:
-        type: integer
-        format: int64
+        type: number
+        format: double
         description: cost of data transfer per GB and 1000 km

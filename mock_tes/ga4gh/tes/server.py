@@ -64,20 +64,17 @@ def __get_task_info(resources, params):
         unit_costs_memory=params['unit_costs']['memory_consumption'],
         unit_costs_storage=params['unit_costs']['data_storage']
     )
-    queue_time = __get_queue_time(
-        resources=resources,
-        time_unit=params['time_unit']
-    )
+    queue_time = __get_queue_time()
     return {
-        'costs_total': costs['total'],
-        'costs_cpu_usage': costs['cpu_usage'],
-        'costs_memory_consumption': costs['memory_consumption'],
-        'costs_data_storage': costs['data_storage'],
-        'costs_data_transfer': {
-		'amount': params['unit_costs']['data_transfer'],
-		'currency': params['currency']
+        'compute_costs_estimate': {
+            'amount': costs['compute'],
+            'currency': params['currency'],
+        },
+        'unit_costs_data_transfer': {
+		    'amount': params['unit_costs']['data_transfer'],
+		    'currency': params['currency'],
 	},
-        'queue_time': queue_time
+        'queue_time_estimate_sec': queue_time
     }
 
 
@@ -98,17 +95,17 @@ def __get_compute_costs(
     mem = resources['ram_gb']
     size = resources['disk_gb']
 
-    # Calculate partial costs
+    # Calculate partial compute costs
     c_cores = t * cores * unit_costs_cores
     c_mem = t * mem * unit_costs_memory
     c_storage = t * size * unit_costs_storage
 
-    # Calculate total costs
+    # Calculate total compute costs
     c_total = c_cores + c_mem + c_storage
 
     # Return dictionary of tesCosts objects
     return {
-        'total': {
+        'compute': {
             'amount': c_total,
             'currency': currency
         },
@@ -127,17 +124,12 @@ def __get_compute_costs(
     }
 
 
-def __get_queue_time(resources, time_unit):
+def __get_queue_time():
     '''
     Helper function to estimate task queue time from tesResources object.
-    Returns a tesDuration object.
+    Returns a random float.
     '''
-    duration = randint(0, 3600)
-    unit = time_unit
-    return {
-        'duration': duration,
-        'unit': unit
-    }
+    return float(randint(0, 3600))
 
 
 def __update_task_info_config(config_new, config_old):
