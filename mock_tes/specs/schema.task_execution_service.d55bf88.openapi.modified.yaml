@@ -110,6 +110,7 @@ paths:
       operationId: GetTaskInfo
       responses:
         '200':
+          description: ''
           schema:
             $ref: '#/definitions/tesTaskInfo'
       parameters:
