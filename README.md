@@ -1,5 +1,7 @@
 # mock-TES
 
+[![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
+
 [Connexion]-based mockup service implementing parts of the GA4GH [Task Execution
 Service] (TES) API schema. The service was developed to implement and test
 [TEStribute], a task distribution logic package for TES instances. It features
