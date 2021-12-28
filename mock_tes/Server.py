@@ -13,8 +13,8 @@ from mock_tes.config.app_config import parse_app_config
 # Instantiate app object
 app = App(
     __name__,
-    swagger_ui=True,
-    swagger_json=True,
+    options={"swagger_ui": True,
+             "swagger_json": True},
 )
 
 # Parse config

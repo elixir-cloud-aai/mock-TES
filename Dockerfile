@@ -37,7 +37,10 @@ RUN pip install -r requirements.txt
 ## Copy app files
 COPY ./ /app
 
+WORKDIR /app
+
 ## Install dependencies
-RUN cd /app \
-  && python setup.py develop \
-  && cd /
+RUN python setup.py develop
+
+WORKDIR /app
+CMD ["python3.6", "mock_tes/Server.py"]
