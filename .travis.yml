@@ -4,4 +4,5 @@ services:
   - docker
 
 before_install:
-  - docker build .
+  - docker-compose up -d --build
+  - curl http://localhost:9001/ga4gh/tes/v1/swagger.json
